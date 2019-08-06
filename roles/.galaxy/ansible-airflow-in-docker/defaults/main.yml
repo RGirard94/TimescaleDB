@@ -1,0 +1,26 @@
+---
+
+airflow_container_name: "airflow"
+
+airflow_root_location: "/opt/docker-data/{{ airflow_container_name }}"
+airflow_script_location: "{{ airflow_root_location }}/script"
+
+# Data location variables
+airflow_data_input_location: "{{ airflow_root_location }}/data/input"
+airflow_data_output_success_location: "{{ airflow_root_location }}/data/success"
+airflow_data_output_failed_location: "{{ airflow_root_location }}/data/failed"
+
+airflow_requirements_location: "{{ airflow_root_location }}/requirements"
+
+# variables inside container
+airflow_script_location_in_container: "/usr/local/airflow/dags/"
+airflow_data_input_location_in_container: "/usr/local/airflow/todo/"
+airflow_data_output_success_location_in_container: "/usr/local/airflow/write_complete/"
+airflow_data_output_failed_location_in_container: "/usr/local/airflow/problem_files/"
+airflow_requirements_location_in_container: "/usr/local/airflow/requirements/"
+
+airflow_docker_networks: []
+#airflow_docker_networks:
+#  - name: "docker_network"
+
+airflow_container_restart_policy: "always"

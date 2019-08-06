@@ -1,0 +1,20 @@
+---
+
+- meta: flush_handlers
+
+- name: Start or restart jupyter container
+  become: true
+  docker_container:
+    name: "{{ jupyter_container_name }}"
+    image: "udyrfrykte/simple-jupyterhub:{{ jupyter_image_version }}"
+    state: "{{ jupyter_docker_state | default('started') }}"
+    restart: "{{ jupyter_docker_restart | default(false) | bool }}"
+    networks: "{{ jupyter_docker_networks }}"
+    restart_policy: "{{ jupyter_container_restart_policy }}"
+    volumes:
+      - "{{ jupyter_conf_location }}/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:ro"
+      - "{{ jupyter_conf_location }}/jupyterhub-singleuser_config.py:/srv/jupyterhub/jupyterhub-singleuser_config.py:ro"
+      - "{{ jupyter_conf_location }}/etc_passwd:/etc/passwd:ro"
+      - "{{ jupyter_conf_location }}/etc_shadow:/etc/shadow:ro"
+      - "{{ jupyter_runtime_location }}:/srv/jupyterhub"
+      - "{{ jupyter_data_location }}:/workspaces"

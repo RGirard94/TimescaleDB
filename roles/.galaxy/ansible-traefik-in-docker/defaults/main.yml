@@ -1,0 +1,36 @@
+---
+
+# Name of the traefik docker container
+traefik_container_name: "traefik"
+
+traefik_root_location: "/opt/docker-data/{{ traefik_container_name }}"
+
+# Path on the host filesystem where will be the traefik conf file
+traefik_conf_location: "{{ traefik_root_location }}/conf"
+
+# Host exposed HTTP/HTTPS/Admin ports for traefik
+traefik_http_port: 80
+traefik_https_port: 443
+traefik_http_admin_port: 8080
+
+# Let's encrypt CA Server to use. If false or unset prod CA Server used
+traefik_le_staging: true
+
+# List of all proxified endpoints
+traefik_endpoints: {}
+#traefik_endpoints:
+#  endpoint_name:
+#    # Fontend match on host to trigger the redirection
+#    host: "test.localhost"
+#    # Backend url to redirect to
+#    dest: "http://perdu.com"
+#    # If true generate let's encrypt certificate for specified host
+#    host_gen_cert: true
+#    # Optional, basic auth. List of pairs of user and password generated with htpasswd (htpasswd -nb "user" "password")
+#    basicAuth: ["user:$apr1$rlKUkg4S$jS2VgSkGnnexLc.K55zFa."]
+
+traefik_docker_networks: []
+#traefik_docker_networks:
+#  - name: "docker_network"
+
+traefik_container_restart_policy: "always"

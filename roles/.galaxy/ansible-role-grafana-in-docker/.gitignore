@@ -1,0 +1,3 @@
+*.retry
+.workdir
+.idea/

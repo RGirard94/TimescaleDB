@@ -1,0 +1,34 @@
+---
+
+- name: create grafana local directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  with_items:
+    - "{{ grafana_conf_location }}"
+    - "{{ grafana_dashboards_location_on_host }}"
+
+- name: "Create datasources configuration file"
+  become: true
+  notify: restart grafana
+  template:
+    src: "datasource_config.yaml.j2"
+    dest: "{{ grafana_conf_location }}/datasource_config.yaml"
+
+- name: "Create dashboards configuration file"
+  become: true
+  notify: restart grafana
+  template:
+    src: "dashboard_config.yaml.j2"
+    dest: "{{ grafana_conf_location }}/dashboards_config.yaml"
+
+- name: "Create ini property file"
+  become: true
+  notify: restart grafana
+  template:
+    src: "grafana.ini.j2"
+    dest: "{{ grafana_conf_location }}/grafana.ini"
+
+- include_tasks: run_container.yml

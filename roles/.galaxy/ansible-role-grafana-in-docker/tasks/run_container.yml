@@ -1,0 +1,24 @@
+---
+
+- meta: flush_handlers
+
+- name: Create a network
+  become: true
+  docker_network:
+    name: "{{ item.name }}"
+  with_items: "{{ grafana_docker_networks }}"
+
+- name: Start or restart grafana container
+  become: true
+  docker_container:
+    name: "{{ grafana_container_name }}"
+    image: grafana/grafana:5.2.2
+    state: "{{ grafana_docker_state | default('started') }}"
+    restart: "{{ grafana_docker_restart | default(false) | bool }}"
+    networks: "{{ grafana_docker_networks }}"
+    restart_policy: "{{ grafana_container_restart_policy }}"
+    volumes:
+      - "{{ grafana_conf_location }}/datasource_config.yaml:/etc/grafana/provisioning/datasources/datasource_config.yaml:ro"
+      - "{{ grafana_conf_location }}/dashboards_config.yaml:/etc/grafana/provisioning/dashboards/dashboards_config.yaml:ro"
+      - "{{ grafana_dashboards_location_on_host }}:{{ grafana_dashboards_location_on_container }}:rw"
+      - "{{ grafana_conf_location}}/grafana.ini:/etc/grafana/grafana.ini:ro"

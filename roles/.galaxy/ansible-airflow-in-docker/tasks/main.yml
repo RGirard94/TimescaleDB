@@ -1,0 +1,23 @@
+---
+
+- name: create airflow local directories
+  become: true
+  file:
+    path: "{{ item }}"
+    owner: 1000
+    state: directory
+    recurse: true
+  with_items:
+    - "{{ airflow_script_location }}"
+    - "{{ airflow_data_input_location }}"
+    - "{{ airflow_data_output_success_location }}"
+    - "{{ airflow_data_output_failed_location }}"
+    - "{{ airflow_requirements_location }}"
+
+- name: Copy requirements file
+  become: true
+  copy:
+    content: "{{ airflow_requirements_file_content }}"
+    dest: "{{ airflow_requirements_location }}/requirements.txt"
+
+- include_tasks: run_container.yml

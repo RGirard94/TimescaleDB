@@ -1,0 +1,4 @@
+root:*:17448:0:99999:7:::
+{% for user in jupyter_authorized_users | map('lower') %}
+{{ user }}:*:17448:0:99999:7:::
+{% endfor %}

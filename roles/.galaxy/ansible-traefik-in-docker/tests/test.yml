@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  roles:
+    - role: ../ansible-traefik-in-docker
+      traefik_http_port: 8090
+      traefik_http_admin_port: 8080
+      traefik_https_port: 4443
+      traefik_le_staging: true
+      traefik_endpoints:
+        influxdb:
+          host: "test.localhost"
+          dest: "http://perdu.com"
+          host_gen_cert: false
+          basicAuth: ["user:$apr1$rlKUkg4S$jS2VgSkGnnexLc.K55zFa."]

@@ -1,0 +1,85 @@
+---
+
+- name: apt-get update
+  apt:
+    update_cache: true
+  become: true
+  changed_when: false
+
+- name: Find kernel uname
+  command: uname -r
+  register: uname_output
+  changed_when: false
+
+- name: Set kernel uname
+  set_fact:
+    kernel_uname: "{{ uname_output.stdout }}"
+
+- name: install docker packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - linux-image-extra-{{ kernel_uname }}
+    - linux-image-extra-virtual
+    - apt-transport-https
+    - ca-certificates
+    - software-properties-common
+  become: true
+  tags:
+    - skip_ansible_lint
+
+- name: Add docker repository key
+  apt_key:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+  become: true
+
+- name: Find ubuntu version
+  command: lsb_release -cs
+  register: ubuntu_version
+  changed_when: false
+
+- name: Add docker reporitory
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_version.stdout }} stable"
+    state: present
+  become: true
+
+- name: Install docker
+  package:
+    name: "docker-ce={{ docker_ce_version }}~ce-0~ubuntu"
+    state: "present"
+  become: true
+
+- name: Create allow containers communication service
+  copy:
+    src: "allow_containers_communication.service"
+    dest: "/etc/systemd/system/allow_containers_communication.service"
+  become: true
+  when: docker_allow_containers_communication
+
+- name: Launch allow containers communication service
+  systemd:
+    name: allow_containers_communication.service
+    state: started
+    enabled: true
+  become: true
+  when: docker_allow_containers_communication
+
+- name: Install pip
+  package:
+    name: "python-pip"
+    state: latest
+  become: true
+  tags:
+    - skip_ansible_lint
+
+- name: Install docker python module
+  become: true
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker
+    - docker-compose

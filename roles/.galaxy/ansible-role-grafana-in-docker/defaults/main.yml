@@ -1,0 +1,12 @@
+---
+
+grafana_container_name: "grafana"
+grafana_docker_networks: []
+grafana_container_restart_policy: "always"
+grafana_conf_location: "/opt/docker-data/{{ grafana_container_name }}/conf"
+grafana_dashboards_location_on_host: "/opt/docker-data/{{ grafana_container_name }}/dashboards"
+
+datasources: [] # datasources is a list of dictionaries containing the following keys : datasource_name, datasource_type, datasource_database, datasource_hostname and datasource_port
+
+grafana_dashboards_location_on_container: "/home/dashboards" # directory where to store/load dashboards on container
+grafana_admin_password: "admin"

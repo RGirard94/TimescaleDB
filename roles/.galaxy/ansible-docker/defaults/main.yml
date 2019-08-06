@@ -1,0 +1,5 @@
+---
+
+docker_allow_containers_communication: true
+
+docker_ce_version: "18.03.1"

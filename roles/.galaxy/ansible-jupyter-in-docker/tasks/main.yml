@@ -1,0 +1,56 @@
+---
+
+- name: Make sure lowercase users are unique
+  assert:
+    that: (jupyter_authorized_users | map('lower') | unique | length) == (jupyter_authorized_users | length)
+    msg: Users are not unique
+
+- name: Create jupyter directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  with_items:
+    - "{{ jupyter_conf_location }}"
+    - "{{ jupyter_runtime_location }}"
+    - "{{ jupyter_data_location }}"
+
+- name: Configure jupyterhub
+  become: true
+  template:
+    src: jupyterhub_config.py.j2
+    dest: "{{ jupyter_conf_location }}/jupyterhub_config.py"
+  notify: restart jupyter
+
+- name: Configure jupyterhub servers
+  become: true
+  template:
+    src: jupyterhub-singleuser_config.py.j2
+    dest: "{{ jupyter_conf_location }}/jupyterhub-singleuser_config.py"
+  notify: restart jupyter
+
+- name: Create jupyter users directories
+  become: true
+  file:
+    path: "{{ jupyter_data_location }}/{{ item }}"
+    state: directory
+    owner: "{{ 10000 + (jupyter_users_slots | random(seed=item)) }}"
+    group: root
+  with_items: "{{ jupyter_authorized_users | map('lower') | list }}"
+
+- name: Configure jupyter users
+  become: true
+  template:
+    src: etc_passwd.j2
+    dest: "{{ jupyter_conf_location }}/etc_passwd"
+    mode: 0644
+
+- name: Configure jupyter passwords
+  become: true
+  template:
+    src: etc_shadow.j2
+    dest: "{{ jupyter_conf_location }}/etc_shadow"
+    mode: 0600
+
+- import_tasks: run_container.yml

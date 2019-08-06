@@ -1,0 +1,44 @@
+---
+
+- include_role:
+    name: .galaxy/ansible-traefik-in-docker
+  vars:
+    traefik_docker_networks:
+      - name: "{{ aura_docker_network }}"
+    traefik_http_port: 80
+    traefik_http_admin_port: 8080
+    traefik_https_port: 443
+    traefik_le_staging: "{{ not (is_prod|default(false)|bool) }}"
+    traefik_endpoints:
+      influxdb:
+        host: "db.{{ domain }}"
+        dest: "http://{{ aura_time_series_db_container }}:{{ aura_time_series_db_port }}"
+        host_gen_cert: true
+      jupyterhub:
+        host: "explore.{{ domain }}"
+        dest: "http://{{ aura_jupyter_container }}:8000"
+        host_gen_cert: true
+      websocket_server:
+        host: "data.{{ domain }}"
+        dest: "ws://{{ aura_backend_webserver_container }}:8887"
+        host_gen_cert: true
+      grafana:
+        host: "monitor.{{ domain }}"
+        dest: "http://{{ aura_monitoring_platform_container }}:3000"
+        host_gen_cert: true
+      airflow:
+        host: "scheduler.{{ domain }}"
+        dest: "http://{{ aura_scheduler_container }}:8080"
+        host_gen_cert: true
+      kibana:
+        host: "kibana.{{ domain }}"
+        dest: "http://{{ aura_kibana_container }}:5601"
+        host_gen_cert: true
+      elasticsearch:
+        host: "elasticsearch.{{ domain }}"
+        dest: "http://{{ aura_elasticsearch_container }}:9200"
+        host_gen_cert: true
+      timescaledb:
+        host: "timescaledb.{{ domain }}"
+        dest: "http://{{ aura_timescaledb_container }}:{{ aura_timescaledb_port }}"
+        host_gen_cert: true

@@ -1,0 +1,19 @@
+---
+
+- meta: flush_handlers
+
+- name: Start or restart airflow container
+  become: true
+  docker_container:
+    name: "{{ airflow_container_name }}"
+    image: rchampseix/airflow_aura
+    state: "{{ airflow_docker_state | default('started') }}"
+    restart: "{{ airflow_docker_restart | default(false) | bool }}"
+    networks: "{{ airflow_docker_networks }}"
+    restart_policy: "{{ airflow_container_restart_policy }}"
+    volumes:
+      - "{{ airflow_script_location }}:{{ airflow_script_location_in_container }}:ro"
+      - "{{ airflow_data_input_location }}:{{ airflow_data_input_location_in_container }}:rw"
+      - "{{ airflow_data_output_success_location }}:{{ airflow_data_output_success_location_in_container }}:rw"
+      - "{{ airflow_data_output_failed_location }}:{{ airflow_data_output_failed_location_in_container }}:rw"
+      - "{{ airflow_requirements_location }}:{{ airflow_requirements_location_in_container }}"

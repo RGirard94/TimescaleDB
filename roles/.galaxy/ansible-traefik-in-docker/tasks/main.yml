@@ -1,0 +1,20 @@
+---
+
+- name: create traefik local directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  with_items:
+    - "{{ traefik_root_location }}"
+    - "{{ traefik_conf_location }}"
+
+- name: "Create configuration"
+  become: true
+  notify: restart traefik
+  template:
+    src: "traefik.toml.j2"
+    dest: "{{ traefik_conf_location }}/traefik.toml"
+
+- include_tasks: run_container.yml

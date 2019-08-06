@@ -1,0 +1,16 @@
+# Please see grafana documentation : http://docs.grafana.org/administration/provisioning/#example-datasource-config-file
+
+# config file version
+apiVersion: 1
+
+# list of datasources that will be inserted/updated
+datasources:
+{% for datasource in datasources %}
+  - name: {{ datasource.datasource_name }}
+    type: {{ datasource.datasource_type }}
+    access: proxy
+    database: {{ datasource.datasource_database }}
+    url: http://{{ datasource.datasource_hostname }}:{{ datasource.datasource_port }}
+    editable: false
+    is_default: true
+{% endfor %}

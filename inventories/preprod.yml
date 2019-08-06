@@ -1,0 +1,7 @@
+---
+
+all:
+  hosts:
+    aura_preprod_aws:
+      is_prod: true
+      domain: "preprod.aura.healthcare.aws"

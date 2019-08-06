@@ -1,0 +1,7 @@
+---
+
+- name: restart grafana
+  set_fact:
+    grafana_docker_restart: true
+
+

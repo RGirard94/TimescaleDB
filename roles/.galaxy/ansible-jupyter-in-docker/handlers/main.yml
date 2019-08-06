@@ -1,0 +1,5 @@
+---
+
+- name: restart jupyter
+  set_fact:
+    jupyter_docker_restart: true

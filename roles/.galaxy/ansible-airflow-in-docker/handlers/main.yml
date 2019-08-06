@@ -1,0 +1,5 @@
+---
+# handlers file for .
+- name: restart airflow
+  set_fact:
+    airflow_docker_restart: true

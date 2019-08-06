@@ -1,0 +1,25 @@
+---
+
+- meta: flush_handlers
+
+- name: Create a network
+  become: true
+  docker_network:
+    name: "{{ item.name }}"
+  with_items: "{{ traefik_docker_networks }}"
+
+- name: Start or restart traefik container
+  become: true
+  docker_container:
+    name: "{{ traefik_container_name }}"
+    image: traefik:v1.6.6
+    state: "{{ traefik_docker_state | default('started') }}"
+    restart: "{{ traefik_docker_restart | default(false) | bool }}"
+    networks: "{{ traefik_docker_networks }}"
+    restart_policy: "{{ traefik_container_restart_policy }}"
+    volumes:
+      - "{{ traefik_conf_location }}/traefik.toml:/etc/traefik/traefik.toml"
+    ports:
+      - "{{ traefik_http_port }}:80"
+      - "{{ traefik_http_admin_port }}:8080"
+      - "{{ traefik_https_port }}:443"

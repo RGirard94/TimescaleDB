@@ -1,0 +1,50 @@
+################################################################
+# Web configuration backend
+################################################################
+[web]
+address = ":8080"
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[acme]
+email = "fiorentino.bastien@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+{% if traefik_le_staging|bool %}
+caServer = "https://acme-staging.api.letsencrypt.org/directory"
+{% endif %}
+[acme.httpChallenge]
+entryPoint = "http"
+
+{% for endpoint, conf in traefik_endpoints|dictsort %}
+{% if conf.host_gen_cert|default(false) %}
+[[acme.domains]]
+  main = "{{ conf.host }}"
+{% endif %}
+{% endfor %}
+
+[file]
+
+[backends]
+{% for endpoint, conf in traefik_endpoints|dictsort %}
+  [backends.backend_{{ endpoint }}]
+    [backends.backend_{{ endpoint }}.servers]
+    [backends.backend_{{ endpoint }}.servers.server0]
+      url = "{{ conf.dest }}"
+{% endfor %}
+
+[frontends]
+{% for endpoint, conf in traefik_endpoints|dictsort %}
+  [frontends.frontend_{{ endpoint }}]
+    entryPoints = ["http", "https"]
+    backend = "backend_{{ endpoint }}"
+    {% if conf.basicAuth is defined %}
+    basicAuth = {{ conf.basicAuth }}
+    {% endif %}
+    [frontends.frontend_{{ endpoint }}.routes.host]
+    rule = "Host:{{ conf.host }}"
+{% endfor %}

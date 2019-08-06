@@ -1,0 +1,15 @@
+firewall_exposed_ports:
+  - "80/tcp"
+  - "443/tcp"
+  - "8086/tcp"
+  - "3000/tcp"
+  - "8888/tcp"
+  - "8887/tcp"
+  - "5601/tcp"
+  - "9200/tcp"
+  - "5044/tcp"
+  - "5432/tcp"
+
+firewall_exposed_services:
+  - "ssh"
+  - "dhcpv6-client"

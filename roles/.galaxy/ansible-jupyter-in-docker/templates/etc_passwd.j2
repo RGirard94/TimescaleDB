@@ -1,0 +1,4 @@
+root:x:0:0:root:/root:/bin/bash
+{% for user in jupyter_authorized_users | map('lower') %}
+{{ user }}:x:{{ 10000 + (jupyter_users_slots | random(seed=user)) }}:0:{{ user }}:/workspaces/{{ user }}:/bin/bash
+{% endfor %}
