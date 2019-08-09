@@ -11,14 +11,13 @@ jupyter_client_id: <GitHub OAuth application Client ID for JupyterHub>
 jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
 ```
 
-`ansible-playbook -vv --diff -i inventories/prod.yml install.yml [-t timescaledb -t jupyter -t reverse_proxy]`
+`ansible-playbook -vv --diff -i inventories/dev.yml --key-file "/PATH/TO/YOUR/KEY/FILE" install.yml [-t timescaledb -t jupyter -t reverse_proxy]`
 
 ### Prerequisites
  * [Ansible v2.4.2](https://www.ansible.com/)
 
 ## Development environment
 ### Prerequisites
- * [Vagrant v1.8.6](https://www.vagrantup.com/)
  
  To deploy this environment on Amazone ec2 instance :
   - create a config file in your local machin .ssh directory and add 
@@ -28,7 +27,7 @@ jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
     IdentityFile /PATH/TO/YOUR/KEY/FILE`
     
   - in your local machin /etc/hosts add following lines :
-    - YOUR EC2 IP ADDRESS  aura_preprod_aws_timescale
+    - YOUR EC2 IP ADDRESS  aura_aws_timescale
     - YOUR EC2 IP ADDRESS  elasticsearch.aura.healthcare.local.aws.timescale kibana.aura.healthcare.local.aws.timescale monitor.aura.healthcare.local.aws.timescale
     
   - in /TimescaleDB/group_vars/all/main.yml set aura_local_ip variable to `aura_local_ip = "YOUR EC2 IP ADDRESS"`
