@@ -1,6 +1,6 @@
 ---
 
-aura_local_ip: "18.224.52.143"
+aura_local_ip: ""
 
 aura_docker_network: "skynet"
 
@@ -25,6 +25,7 @@ aura_physio_data_db_name: "physio_signals"
 aura_time_series_db_type: "influxdb"
 aura_internal_db_data_db_name: "_internal"
 
+aura_timescaledb_db_type: "postgresql"
 aura_timescaledb_container: "timescaledb"
 aura_timescaledb_port: 5432
 

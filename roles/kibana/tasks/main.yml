@@ -16,7 +16,7 @@
     src: "kibana.yml.j2"
     dest: "{{ kibana_conf_location }}/kibana.yml"
 
-- name: add kibana.aura.healhcare.local to hosts file
+- name: add kibana.{{ domain }} to hosts file
   become: true
   lineinfile:
     path: /etc/hosts
