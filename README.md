@@ -15,7 +15,6 @@ jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
 
 ### Prerequisites
  * [Ansible v2.4.2](https://www.ansible.com/)
- * The server has to have a user `aura` with following `/etc/sudoers` configuration : `aura  ALL=(ALL)    NOPASSWD:  ALL`
 
 ## Development environment
 ### Prerequisites
@@ -24,9 +23,9 @@ jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
  To deploy this environment on Amazone ec2 instance :
   - create a config file in your local machin .ssh directory and add 
   `Host aura_aws_timescale
-    Hostname 'YOUR IP ADDRESS'
+    Hostname YOUR IP ADDRESS
     User centos
-    IdentityFile '/PATH/TO/YOUR/KEY/FILE'`
+    IdentityFile /PATH/TO/YOUR/KEY/FILE`
     
   - in your local machin /etc/hosts add following lines :
     - YOUR EC2 IP ADDRESS  aura_preprod_aws_timescale
@@ -34,7 +33,7 @@ jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
     
   - in /TimescaleDB/group_vars/all/main.yml set aura_local_ip variable to `aura_local_ip = "YOUR EC2 IP ADDRESS"`
 
-  Everytime you stop and start the ec2, you need to change IP address in previous file.
+  Everytime you stop and start the ec2, you need to change IP address in previous files.
 
 ## ELK stack
 
