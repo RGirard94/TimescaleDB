@@ -11,7 +11,7 @@ jupyter_client_id: <GitHub OAuth application Client ID for JupyterHub>
 jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
 ```
 
-`ansible-playbook -vv --diff -i inventories/prod.yml install.yml [-t time_series_db -t jupyter -t reverse_proxy]`
+`ansible-playbook -vv --diff -i inventories/prod.yml install.yml [-t timescaledb -t jupyter -t reverse_proxy]`
 
 ### Prerequisites
  * [Ansible v2.4.2](https://www.ansible.com/)
@@ -20,25 +20,21 @@ jupyter_client_secret: <GitHub OAuth application Client Secret for JupyterHub>
 ## Development environment
 ### Prerequisites
  * [Vagrant v1.8.6](https://www.vagrantup.com/)
- * To have a public ssh key on your local machine on location : `~/.ssh/id_rsa.pub`
-### tl;dr
- 0. (only once) : `echo -e "192.168.33.22\tdb.aura.healthcare.local" | sudo tee -a /etc/hosts`
- 1. `vagrant up`
- 2. `ansible-playbook -i inventories/dev.yml install.yml [-t time_series_db -t reverse_proxy, ...]`
- 3. Enjoy
- 4. `vagrant destroy` 
+ 
+ To deploy this environment on Amazone ec2 instance :
+  - create a config file in your local machin .ssh directory and add 
+  `Host aura_aws_timescale
+    Hostname 'YOUR IP ADDRESS'
+    User centos
+    IdentityFile '/PATH/TO/YOUR/KEY/FILE'`
+    
+  - in your local machin /etc/hosts add following lines :
+    - YOUR EC2 IP ADDRESS  aura_preprod_aws_timescale
+    - YOUR EC2 IP ADDRESS  elasticsearch.aura.healthcare.local.aws.timescale kibana.aura.healthcare.local.aws.timescale monitor.aura.healthcare.local.aws.timescale
+    
+  - in /TimescaleDB/group_vars/all/main.yml set aura_local_ip variable to `aura_local_ip = "YOUR EC2 IP ADDRESS"`
 
-### Usage
-Your local vagrant environment is configured inside the inventory `inventories/dev.yml`.
-
-You can run any playbook on this environment.
-
-To have a local url that route to this development environment you can add this line in your hosts file (/etc/hosts) : `192.168.33.22   db.aura.healthcare.local`
-
-Once you have executed the `vagrand up` command and run the `install.yml` playbook on the development environment you can change the configuration of the mobile app to use the `db.aura.healthcare.local` url, you can do any test.
-
-You can ssh to the virtual machine with `ssh ansible@192.168.33.22` 
-
+  Everytime you stop and start the ec2, you need to change IP address in previous file.
 
 ## ELK stack
 
@@ -73,15 +69,19 @@ Kibana is used to display relevant dashboard. Two dashboard are uploaded in kiba
 
 The container_monitoring_dashboard allows to follow docker containers system metrics. It displays CPU, memory, number of container etc ...
 
-The influxdb_monitoring_dashboard monitors the influxdb container. This dashboard displays influxdb's metrics. It adds two visualizations :
+The TimescaleDB_monitoring_dashboard monitors the influxdb container. This dashboard displays influxdb's metrics. It adds two visualizations :
     - Nb input / time displays the total amount of data about to be stored during an injection along the time.
-    - Nb output / time displays the total amount of data stored in the database during an injection along the time.
 
 To load your own dashboard, follow the steps:
     - create your visualizations with the kibana UI
     - create your dashboard with the kibana UI using the visualizations you have created before
     - download your dashboard's json format using the REST API:
-        `curl -X GET "kibana.aura.healthcare.local:80/api/kibana/dashboards/export?dashboard=*id*" -H 'kbn-xsrf: true'`
+        `curl -X GET "kibana.aura.healthcare.local.aws.timescale:80/api/kibana/dashboards/export?dashboard=*id*" -H 'kbn-xsrf: true'`
         replace *id* by yout dashboard's id in kibana
     - add the json script in a file in /kibana/files
     - add a task in /kibana/tasks/run_container.yml (just copy paste a load task and change the file in the body module) to upload your dashboard in kibana each time you rebuild the stack.
+    
+## Problem
+
+ When TimescaleDB docker container is deployed, you have to modify manually following line's value :
+  `host all all all md5` by `host all all all trust` located in `var/lib/postgresql/data/pg_hba.conf`
